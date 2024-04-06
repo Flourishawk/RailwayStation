@@ -1496,8 +1496,8 @@ namespace PassprotDeskApp
                             data.Add(new string[4]);
                             data[data.Count - 1][0] = DbReader[0].ToString();
                             data[data.Count - 1][1] = DbReader[1].ToString();
-                            data[data.Count - 1][2] = DbReader[1].ToString();
-                            data[data.Count - 1][3] = DbReader[1].ToString();
+                            data[data.Count - 1][2] = DbReader[2].ToString();
+                            data[data.Count - 1][3] = DbReader[3].ToString();
                         }
 
                         foreach (string[] s in data)
@@ -1533,8 +1533,8 @@ namespace PassprotDeskApp
                             data.Add(new string[4]);
                             data[data.Count - 1][0] = DbReader[0].ToString();
                             data[data.Count - 1][1] = DbReader[1].ToString();
-                            data[data.Count - 1][2] = DbReader[1].ToString();
-                            data[data.Count - 1][3] = DbReader[1].ToString();
+                            data[data.Count - 1][2] = DbReader[2].ToString();
+                            data[data.Count - 1][3] = DbReader[3].ToString();
                         }
 
                         foreach (string[] s in data)
@@ -1853,12 +1853,12 @@ namespace PassprotDeskApp
                             data[data.Count - 1][1] = DbReader[1].ToString();
                             if (DateTime.TryParse(DbReader[1].ToString(), out date))
                             {
-                                data[data.Count - 1][1] = date.ToString("yyyy.MM.dd HH:mm");
+                                data[data.Count - 1][1] = date.ToString("HH:mm");
                             }
 
                             if (DateTime.TryParse(DbReader[2].ToString(), out date))
                             {
-                                data[data.Count - 1][2] = date.ToString("yyyy.MM.dd HH:mm");
+                                data[data.Count - 1][2] = date.ToString("HH:mm");
                             }
                         }
 
@@ -1898,12 +1898,12 @@ namespace PassprotDeskApp
                             data[data.Count - 1][1] = DbReader[1].ToString();
                             if (DateTime.TryParse(DbReader[1].ToString(), out date))
                             {
-                                data[data.Count - 1][1] = date.ToString("yyyy.MM.dd");
+                                data[data.Count - 1][1] = date.ToString("HH:mm");
                             }
 
                             if (DateTime.TryParse(DbReader[2].ToString(), out date))
                             {
-                                data[data.Count - 1][2] = date.ToString("yyyy.MM.dd");
+                                data[data.Count - 1][2] = date.ToString("HH:mm");
                             }
                         }
 
@@ -2781,9 +2781,9 @@ namespace PassprotDeskApp
 
         private void button31_Click(object sender, EventArgs e)
         {
-            if (Route_direction_fk_textbox.Text != "" && Route_railway_station_fk_textbox.Text != "" && Route_departure_time_textbox.Text != "" && Route_train_id_textbox.Text != "")
+            if (Route_direction_fk_textbox.Text != "" && Route_railway_station_fk_textbox.Text != "" && Route_departure_time_textbox.Text != "" && Route_train_id_textbox.Text != "" && Route_arrival_time_textbox.Text == "")
             {
-                string query = "INSERT INTO Route VALUES (?,?,?,,?)";
+                string query = "INSERT INTO Route(direction_fk,railway_station_fk,departure_time,train_id) VALUES (?,?,?,?)";
                 try
                 {
 
@@ -2808,9 +2808,9 @@ namespace PassprotDeskApp
                     MessageBox.Show(exp.ToString(), "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            else if (Route_direction_fk_textbox.Text != "" && Route_railway_station_fk_textbox.Text != "" && Route_arrival_time_textbox.Text != "" && Route_train_id_textbox.Text != "")
+            else if (Route_direction_fk_textbox.Text != "" && Route_railway_station_fk_textbox.Text != "" && Route_arrival_time_textbox.Text != "" && Route_train_id_textbox.Text != "" && Route_departure_time_textbox.Text == "")
             {
-                string query = "INSERT INTO Route VALUES (?,?,,?,?)";
+                string query = "INSERT INTO Route(direction_fk,railway_station_fk,arrival_time,train_id) VALUES (?,?,?,?)";
                 try
                 {
 
@@ -2994,6 +2994,34 @@ namespace PassprotDeskApp
                     MessageBox.Show(exp.ToString(), "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            else if (Ticket_ticket_id_textbox.Text != "" && Ticket_seat_textbox.Text != "" && Ticket_wagon_fk_text_box.Text != "" && Ticket_ticket_type_fk_textbox.Text != "" && Ticket_customer_fk_textbox.Text != "")
+            {
+                    string query = "INSERT INTO Ticket VALUES (?,?,?,?,?)";
+                    try
+                    {
+
+                        using (OdbcConnection DbConnection = new OdbcConnection("DSN=RailwayStation"))
+                        {
+
+                            DbConnection.Open();
+                            using (OdbcCommand command = new OdbcCommand(query, DbConnection))
+                            {
+                                command.Parameters.AddWithValue("@ticket_id", Ticket_ticket_id_textbox.Text);
+                                command.Parameters.AddWithValue("@seat", Ticket_seat_textbox.Text);
+                                command.Parameters.AddWithValue("@customer_fk", Ticket_wagon_fk_text_box.Text);
+                                command.Parameters.AddWithValue("@wagon_fk", Ticket_ticket_type_fk_textbox.Text);
+                                command.Parameters.AddWithValue("@ticket_type_fk", Ticket_customer_fk_textbox.Text);
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                        query = "";
+
+                    }
+                    catch (OdbcException exp)
+                    {
+                        MessageBox.Show(exp.ToString(), "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+             }
             else { MessageBox.Show("Не всі значення введені", "Помилка", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
     }
